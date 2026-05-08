@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muhammad Sheeraz — Digital Craftsman</title>
+
+  <!-- ═══════════════════════════════════════════
+       FONTS
+  ═══════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Montserrat:wght@100;200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ═══════════════════════════════════════════
+       CSS VARIABLES — BLACK & GOLD THEME
+    ═══════════════════════════════════════════ */
+    :root {
+      --gold:        #C9A84C;
+      --gold-light:  #E8C97A;
+      --gold-dim:    #8B6914;
+      --gold-faint:  rgba(201,168,76,0.08);
+      --black:       #0a0a0a;
+      --black-2:     #0f0e0d;
+      --black-3:     #141210;
+      --black-4:     #1a1815;
+      --white:       #F5F0E8;
+      --white-dim:   rgba(245,240,232,0.55);
+      --white-faint: rgba(245,240,232,0.08);
+      --border:      rgba(201,168,76,0.18);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body:    'Montserrat', sans-serif;
+      --font-accent:  'Playfair Display', serif;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background-color: var(--black);
+      background-image:
+        /* Fine diagonal crosshatch — very subtle gold weave */
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 28px,
+          rgba(201,168,76,0.018) 28px,
+          rgba(201,168,76,0.018) 29px
+        ),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 28px,
+          rgba(201,168,76,0.012) 28px,
+          rgba(201,168,76,0.012) 29px
+        ),
+        /* Linen-style horizontal micro lines */
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(255,255,255,0.008) 3px,
+          rgba(255,255,255,0.008) 4px
+        );
+      color: var(--white);
+      font-family: var(--font-body);
+      font-weight: 300;
+      letter-spacing: 0.03em;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    ::selection { background: var(--gold); color: var(--black); }
+
+    /* ═══════════════════════════════════════════
+       CUSTOM CURSOR — LUXURY STYLE
+    ═══════════════════════════════════════════ */
+    #cursor-outer {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transition: transform 0.15s ease, opacity 0.3s ease, border-color 0.3s ease;
+      transform: translate(-50%,-50%);
+    }
+    #cursor-inner {
+      position: fixed;
+      width: 6px; height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.05s ease, background 0.3s ease;
+    }
+    #cursor-label {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99998;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translate(-50%, 28px);
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+    }
+    body.cursor-hover #cursor-outer {
+      transform: translate(-50%,-50%) scale(2.2);
+      background: var(--gold-faint);
+      border-color: var(--gold-light);
+    }
+    body.cursor-hover #cursor-inner { background: var(--gold-light); }
+    body.cursor-hover #cursor-label { opacity: 1; }
+
+    /* ═══════════════════════════════════════════
+       TEXTURE OVERLAYS — grain + vignette
+    ═══════════════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.09'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      pointer-events: none;
+      z-index: 9990;
+      opacity: 1;
+      mix-blend-mode: overlay;
+    }
+    /* Vignette — darkens edges, pulls focus to center */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(
+        ellipse 85% 85% at 50% 50%,
+        transparent 40%,
+        rgba(0,0,0,0.55) 100%
+      );
+      pointer-events: none;
+      z-index: 9989;
+    }
+
+    #services, #process {
+      background-color: var(--black-2);
+      background-image:
+        repeating-linear-gradient(
+          60deg,
+          transparent,
+          transparent 40px,
+          rgba(201,168,76,0.014) 40px,
+          rgba(201,168,76,0.014) 41px
+        ),
+        repeating-linear-gradient(
+          -60deg,
+          transparent,
+          transparent 40px,
+          rgba(201,168,76,0.009) 40px,
+          rgba(201,168,76,0.009) 41px
+        );
+    }
+    /* ═══════════════════════════════════════════
+       SECTION TEXTURES
+    ═══════════════════════════════════════════ */
+    #services, #process {
+      background-color: var(--black-2);
+      background-image:
+        repeating-linear-gradient(
+          60deg,
+          transparent,
+          transparent 40px,
+          rgba(201,168,76,0.014) 40px,
+          rgba(201,168,76,0.014) 41px
+        ),
+        repeating-linear-gradient(
+          -60deg,
+          transparent,
+          transparent 40px,
+          rgba(201,168,76,0.009) 40px,
+          rgba(201,168,76,0.009) 41px
+        );
+    }
+    #contact {
+      background-color: var(--black-2);
+      background-image:
+        radial-gradient(ellipse 70% 50% at 80% 50%, rgba(201,168,76,0.04) 0%, transparent 70%),
+        repeating-linear-gradient(
+          30deg,
+          transparent,
+          transparent 36px,
+          rgba(201,168,76,0.012) 36px,
+          rgba(201,168,76,0.012) 37px
+        );
+    }
+
+    /* ═══════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+    /* ═══════════════════════════════════════════
+       UTILITY CLASSES
+    ═══════════════════════════════════════════ */
+    .gold        { color: var(--gold); }
+    .gold-text   { background: linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dim)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::before {
+      content: '';
+      width: 30px; height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.3;
+      margin: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       LOADING SCREEN
+    ═══════════════════════════════════════════ */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--black);
+      z-index: 99997;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    #loader .loader-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--white);
+    }
+    #loader .loader-line {
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transition: width 1.8s ease;
+    }
+    #loader .loader-pct {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+    }
+
+    /* ═══════════════════════════════════════════
+       NAVIGATION
+       EDIT: Change nav links, logo name here
+    ═══════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 28px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(5,5,5,0.92);
+      backdrop-filter: blur(20px);
+      padding: 18px 60px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 42px; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: none;
+      z-index: 1001;
+    }
+    .hamburger span {
+      width: 28px; height: 1px;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO SECTION
+       EDIT: Name, tagline, role titles here
+    ═══════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 0 60px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 70% 50%, rgba(201,168,76,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+    .hero-grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 0%, transparent 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+    }
+    .hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--gold); }
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 7.5rem);
+      font-weight: 300;
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-roles {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2.5rem;
+      overflow: hidden;
+      opacity: 0;
+    }
+    #typed-role {
+      font-family: var(--font-body);
+      font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+    }
+    .cursor-blink {
+      display: inline-block;
+      width: 2px; height: 1em;
+      background: var(--gold);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero-desc {
+      font-size: 0.85rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--white-dim);
+      max-width: 500px;
+      margin-bottom: 3rem;
+      opacity: 0;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      opacity: 0;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--black);
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.3); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 36px;
+      border: 1px solid var(--border);
+      color: var(--white-dim);
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-ghost::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--gold-faint);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .btn-ghost:hover::before { transform: scaleX(1); }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Hero scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px; right: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+    }
+    .scroll-indicator span {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--gold-dim), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { transform: scaleY(1); opacity:1; }
+      50% { transform: scaleY(0.6); opacity:0.4; }
+    }
+
+    /* ═══════════════════════════════════════════
+       ABOUT SECTION
+       EDIT: Bio text, stats here
+    ═══════════════════════════════════════════ */
+    #about {
+      padding: 140px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .about-left { position: relative; }
+    .about-img-frame {
+      position: relative;
+      width: 200%;
+      aspect-ratio: 3/4;
+      max-width: 380px;
+    }
+    /* Gold corner decorations */
+    .about-img-frame::before, .about-img-frame::after {
+      content: '';
+      position: absolute;
+      width: 100px; height: 100px;
+      border-color: var(--gold);
+      border-style: solid;
+      z-index: 2;
+    }
+    .about-img-frame::before { top: -12px; left: -12px; border-width: 1px 0 0 1px; }
+    .about-img-frame::after  { bottom: -12px; right: -55px; border-width: 0 1px 1px 0; }
+
+    .about-img-placeholder {
+    width: 420px;
+    height: 520px;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 12px;
+   }
+
+  .about-img-placeholder img {
+    width: 110%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+   }
+    .about-img-placeholder::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.04), transparent 60%);
+    }
+    .about-img-placeholder svg { opacity: 0.3; }
+    .about-img-placeholder p {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    /* Gold blob accent */
+    .about-accent {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(201,168,76,0.12), transparent 70%);
+      filter: blur(30px);
+      pointer-events: none;
+    }
+
+    .about-right h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+    .about-right h2 em { font-style: italic; color: var(--gold); }
+    .about-right p {
+      font-size: 0.83rem;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--white-dim);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 3rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 8px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════
+       SERVICES / SKILLS SECTION
+       EDIT: Service cards content here
+    ═══════════════════════════════════════════ */
+    #services {
+      padding: 140px 60px;
+      position: relative;
+      background: var(--black-2);
+    }
+    .services-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 80px;
+    }
+    .services-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--white);
+    }
+    .services-header h2 em { font-style: italic; color: var(--gold); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+    }
+    .service-card {
+      padding: 48px 40px;
+      background: var(--black-2);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s ease;
+      cursor: none;
+    }
+    /* Gold shimmer on hover */
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transition: left 0.6s ease;
+    }
+    .service-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 0%, rgba(201,168,76,0.06), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .service-card:hover::before { left: 100%; }
+    .service-card:hover::after { opacity: 1; }
+    .service-card:hover { background: var(--black-3); }
+    .service-card:hover .service-icon { color: var(--gold-light); transform: scale(1.1); }
+    .service-card:hover .service-title { color: var(--gold); }
+
+    .service-number {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: rgba(201,168,76,0.08);
+      position: absolute;
+      top: 20px; right: 28px;
+      line-height: 1;
+      transition: color 0.4s ease;
+      user-select: none;
+    }
+    .service-card:hover .service-number { color: rgba(201,168,76,0.15); }
+
+    .service-icon {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      display: block;
+      transition: all 0.4s ease;
+      color: var(--gold-dim);
+      position: relative; z-index: 1;
+    }
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 14px;
+      transition: color 0.4s ease;
+      position: relative; z-index: 1;
+    }
+    .service-desc {
+      font-size: 0.78rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--white-dim);
+      position: relative; z-index: 1;
+    }
+    .service-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+      position: relative; z-index: 1;
+    }
+    .tag {
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      color: var(--gold-dim);
+      transition: all 0.3s ease;
+    }
+    .service-card:hover .tag { border-color: rgba(201,168,76,0.3); color: var(--gold); }
+
+    /* ═══════════════════════════════════════════
+       EXPERTISE / TOOLS SECTION
+       EDIT: Tools and software list here
+    ═══════════════════════════════════════════ */
+    #expertise {
+      padding: 140px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .expertise-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .expertise-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-bottom: 80px;
+    }
+    .expertise-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--white);
+    }
+    .expertise-header h2 em { font-style: italic; color: var(--gold); }
+    .expertise-header p {
+      font-size: 0.83rem;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--white-dim);
+      padding-top: 1rem;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+    .tool-item {
+      background: var(--black);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+      cursor: none;
+    }
+    .tool-item::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    .tool-item:hover::before { transform: scaleX(1); }
+    .tool-item:hover { background: var(--black-3); }
+    .tool-icon {
+      font-size: 1.6rem;
+      margin-bottom: 12px;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .tool-item:hover .tool-icon { transform: translateY(-4px); }
+    .tool-name {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--white-dim);
+      display: block;
+      transition: color 0.3s ease;
+    }
+    .tool-item:hover .tool-name { color: var(--gold); }
+
+    /* ═══════════════════════════════════════════
+       PROCESS SECTION
+       EDIT: Process steps here
+    ═══════════════════════════════════════════ */
+    #process {
+      padding: 140px 60px;
+      background: var(--black-2);
+      position: relative;
+      overflow: hidden;
+    }
+    #process::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,0.04), transparent 70%);
+      pointer-events: none;
+    }
+    .process-inner { max-width: 1200px; margin: 0 auto; }
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .process-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      font-weight: 300;
+      color: var(--white);
+    }
+    .process-header h2 em { font-style: italic; color: var(--gold); }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    /* Connecting line between steps */
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 36px; left: 12.5%; right: 12.5%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+      opacity: 0.3;
+      z-index: 0;
+    }
+    .step {
+      padding: 0 32px 48px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step-num {
+      width: 72px; height: 72px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--gold);
+      background: var(--black-2);
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .step:hover .step-num {
+      background: var(--gold-faint);
+      border-color: var(--gold);
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(201,168,76,0.2);
+    }
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+    .step:hover .step-title { color: var(--gold); }
+    .step-desc {
+      font-size: 0.78rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-dim);
+    }
+
+    /* ═══════════════════════════════════════════
+       TESTIMONIALS / QUOTE SECTION
+       EDIT: Quote text and author here
+    ═══════════════════════════════════════════ */
+    #quote {
+      padding: 120px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #quote::before {
+      content: '"';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-display);
+      font-size: 20rem;
+      color: rgba(201,168,76,0.03);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .quote-text {
+      font-family: var(--font-accent);
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--white);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+    .quote-text span { color: var(--gold); }
+    .quote-attr {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    /* ═══════════════════════════════════════════
+       CONTACT SECTION
+       EDIT: Email, social links, contact info here
+    ═══════════════════════════════════════════ */
+    #contact {
+      padding: 140px 60px;
+      background: var(--black-2);
+      position: relative;
+      overflow: hidden;
+    }
+    #contact::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 400px;
+      background: linear-gradient(to top, rgba(201,168,76,0.03), transparent);
+      pointer-events: none;
+    }
+    .contact-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+    .contact-left h2 {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .contact-left h2 em { font-style: italic; color: var(--gold); }
+    .contact-left p {
+      font-size: 0.83rem;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--white-dim);
+      margin-bottom: 2.5rem;
+    }
+    .contact-email {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+      text-decoration: none;
+      position: relative;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+    .contact-email::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 100%; height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.4s ease;
+    }
+    .contact-email:hover::after { transform: scaleX(1); transform-origin: left; }
+    .contact-email:hover { color: var(--gold-light); }
+
+    .contact-socials {
+      display: flex;
+      gap: 16px;
+      margin-top: 2.5rem;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      color: var(--white-dim);
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .social-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--gold-faint);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .social-btn:hover::before { transform: scaleX(1); }
+    .social-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .social-btn span { position: relative; }
+
+    /* Contact form */
+    .contact-right { position: relative; }
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-group { position: relative; }
+    .form-group label {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--black);
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 0.83rem;
+      font-weight: 300;
+      padding: 14px 18px;
+      outline: none;
+      transition: all 0.3s ease;
+      resize: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: rgba(245,240,232,0.2); }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+      background: var(--black-3);
+      box-shadow: 0 0 0 1px rgba(201,168,76,0.1);
+    }
+    .form-group textarea { height: 130px; }
+
+    .form-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 40px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .form-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+      z-index: 0;
+    }
+    .form-submit:hover::before { transform: scaleX(1); }
+    .form-submit:hover { color: var(--black); }
+    .form-submit span { position: relative; z-index: 1; }
+
+    /* ═══════════════════════════════════════════
+       FOOTER
+       EDIT: Footer links, copyright text here
+    ═══════════════════════════════════════════ */
+    footer {
+      padding: 40px 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--black);
+    }
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--white-dim);
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-copy {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: rgba(245,240,232,0.25);
+      text-transform: uppercase;
+    }
+    .footer-tagline {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════════════════
+       MARQUEE STRIP
+    ═══════════════════════════════════════════ */
+    .marquee-strip {
+      padding: 18px 0;
+      background: var(--gold);
+      overflow: hidden;
+      position: relative;
+    }
+    .marquee-inner {
+      display: flex;
+      gap: 60px;
+      animation: marquee 22s linear infinite;
+      width: max-content;
+    }
+    .marquee-inner span {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--black);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .marquee-inner .dot {
+      color: rgba(0,0,0,0.3);
+      font-size: 6px;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ═══════════════════════════════════════════
+       SCROLL ANIMATIONS
+    ═══════════════════════════════════════════ */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.3s; }
+    .fade-up.delay-4 { transition-delay: 0.4s; }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      nav { padding: 24px 40px; }
+      #hero, #about, #services, #expertise, #process, #contact { padding-left: 40px; padding-right: 40px; }
+      .about-inner { grid-template-columns: 1fr; gap: 60px; }
+      .about-img-frame { max-width: 260px; }
+      .expertise-header { grid-template-columns: 1fr; gap: 30px; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-steps::before { display: none; }
+      .contact-inner { grid-template-columns: 1fr; gap: 60px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      #hero, #about, #services, #expertise, #process, #contact { padding-left: 24px; padding-right: 24px; }
+      .hero-cta { flex-direction: column; align-items: flex-start; }
+      .process-steps { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: repeat(2, 1fr); }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+      .scroll-indicator { display: none; }
+    }
+
+    /* Mobile nav overlay */
+    .nav-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(5,5,5,0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    .nav-overlay.open { display: flex; }
+    .nav-overlay a {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--white-dim);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.3s ease;
+    }
+    .nav-overlay a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       CUSTOM CURSOR ELEMENTS
+  ═══════════════════════════════════════════ -->
+  <div id="cursor-outer"></div>
+  <div id="cursor-inner"></div>
+  <div id="cursor-label"></div>
+
+  <!-- ═══════════════════════════════════════════
+       LOADING SCREEN
+  ═══════════════════════════════════════════ -->
+  <div id="loader">
+    <div class="loader-name">Muhammad Sheeraz</div>
+    <div class="loader-line" id="loaderLine"></div>
+    <div class="loader-pct" id="loaderPct">0%</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MOBILE NAV OVERLAY
+  ═══════════════════════════════════════════ -->
+  <div class="nav-overlay" id="navOverlay">
+    <a href="#about" onclick="closeNav()">About</a>
+    <a href="#services" onclick="closeNav()">Services</a>
+    <a href="#expertise" onclick="closeNav()">Expertise</a>
+    <a href="#process" onclick="closeNav()">Process</a>
+    <a href="#contact" onclick="closeNav()">Contact</a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       NAVIGATION
+       EDIT: Your nav logo and links here
+  ═══════════════════════════════════════════ -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">M.<span>Sheeraz</span></a>
+    <ul class="nav-links">
+      <li><a href="#about" class="nav-hover">About</a></li>
+      <li><a href="#services" class="nav-hover">Services</a></li>
+      <li><a href="#expertise" class="nav-hover">Expertise</a></li>
+      <li><a href="#process" class="nav-hover">Process</a></li>
+      <li><a href="#contact" class="nav-hover">Contact</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       HERO SECTION
+       EDIT: Your headline, tagline, description
+  ═══════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+
+    <div class="hero-content">
+      <!-- EDIT: Eyebrow label -->
+      <div class="hero-eyebrow" id="heroEyebrow">
+        Available for Projects — 2026
+      </div>
+
+      <!-- EDIT: Your name display -->
+      <h1 class="hero-name" id="heroName">
+        Muhammad<br><em>Sheeraz</em>
+      </h1>
+
+      <!-- Typed roles — EDIT in JS below -->
+      <div class="hero-roles" id="heroRoles">
+        <span id="typed-role"></span>
+        <span class="cursor-blink"></span>
+      </div>
+
+      <!-- EDIT: Short hero description -->
+      <p class="hero-desc" id="heroDesc">
+        A multi-disciplined digital craftsman blending technical precision with aesthetic vision — crafting brands, experiences, and systems that perform at the highest level.
+      </p>
+
+      <div class="hero-cta" id="heroCta">
+        <a href="#contact" class="btn-primary hover-target" data-label="Let's Talk">
+          <span>Let's Collaborate</span>
+        </a>
+        <a href="#services" class="btn-ghost hover-target" data-label="Explore">
+          <span>View Services</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator" id="scrollInd">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE STRIP -->
+  <div class="marquee-strip">
+    <div class="marquee-inner">
+      <span>Web Design</span><span class="dot">◆</span>
+      <span>Video Editing</span><span class="dot">◆</span>
+      <span>Social Media</span><span class="dot">◆</span>
+      <span>UI / UX Design</span><span class="dot">◆</span>
+      <span>Supply Chain</span><span class="dot">◆</span>
+      <span>Graphic Design</span><span class="dot">◆</span>
+      <span>Power BI</span><span class="dot">◆</span>
+      <span>Excel Mastery</span><span class="dot">◆</span>
+      <span>Web Design</span><span class="dot">◆</span>
+      <span>Video Editing</span><span class="dot">◆</span>
+      <span>Social Media</span><span class="dot">◆</span>
+      <span>UI / UX Design</span><span class="dot">◆</span>
+      <span>Supply Chain</span><span class="dot">◆</span>
+      <span>Graphic Design</span><span class="dot">◆</span>
+      <span>Power BI</span><span class="dot">◆</span>
+      <span>Excel Mastery</span><span class="dot">◆</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       ABOUT SECTION
+       EDIT: Bio paragraphs, stats numbers here
+  ═══════════════════════════════════════════ -->
+  <section id="about">
+    <div class="about-inner">
+      <div class="about-left">
+        <div class="about-img-frame"> 
+          <div class="about-img-placeholder">
+            <img src="1.jpg" alt="Muhammad Sheeraz"> 
+            <svg width="100" height="100" viewBox="0 0 64 64" fill="none">
+              <circle cx="32" cy="24" r="12" stroke="#C9A84C" stroke-width="1"/>
+              <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="#C9A84C" stroke-width="1"/>
+            </svg>
+            <!-- EDIT: Remove this label after adding your photo -->
+            <p>Add Your Photo Here</p>
+          </div>
+        </div>
+        <div class="about-accent"></div>
+      </div>
+
+      <div class="about-right">
+        <p class="section-label fade-up">About Me</p>
+        <!-- EDIT: Section headline -->
+        <h2 class="fade-up delay-1">The Art of <em>Precision</em><br>Meets Strategy</h2>
+
+        <!-- EDIT: Your bio — paragraph 1 -->
+        <p class="fade-up delay-2">
+          I'm Muhammad Sheeraz — a versatile digital professional based in Pakistan with a passion for creating compelling digital experiences. From pixel-perfect websites to data-driven business insights, I operate where creativity and analytical thinking converge.
+        </p>
+
+        <!-- EDIT: Your bio — paragraph 2 -->
+        <p class="fade-up delay-3">
+          With expertise spanning web development, video production, brand strategy, supply chain management, and advanced data analytics, I bring a rare 360° perspective to every project I undertake.
+        </p>
+
+        <!-- EDIT: Your stats — number and label -->
+        <div class="about-stats fade-up delay-4">
+          <div class="stat-item">
+            <span class="stat-num" data-target="8">0</span>
+            <span class="stat-label">Skills Mastered</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="100">0</span>
+            <span class="stat-label">% Commitment</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="1">0</span>
+            <span class="stat-label">Vision, Infinite Craft</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       SERVICES SECTION
+       EDIT: Each .service-card title, desc, tags
+  ═══════════════════════════════════════════ -->
+  <section id="services">
+    <div class="services-header">
+      <p class="section-label fade-up" style="justify-content:center;">What I Do</p>
+      <h2 class="fade-up delay-1">Crafted <em>Services</em><br>Built for Impact</h2>
+    </div>
+
+    <div class="services-grid">
+
+      <!-- SERVICE CARD 1 — EDIT: Website Design -->
+      <div class="service-card fade-up hover-target" data-label="View">
+        <span class="service-number">01</span>
+        <span class="service-icon">🌐</span>
+        <h3 class="service-title">Website Design & Development</h3>
+        <p class="service-desc">
+          Building high-performance, visually stunning websites that captivate audiences and convert visitors. From landing pages to full web applications — responsive, fast, and refined.
+        </p>
+        <div class="service-tags">
+          <span class="tag">HTML / CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">WordPress</span>
+          <span class="tag">Responsive</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 2 — EDIT: Video Editing -->
+      <div class="service-card fade-up delay-1 hover-target" data-label="View">
+        <span class="service-number">02</span>
+        <span class="service-icon">🎬</span>
+        <h3 class="service-title">Video Editing & Production</h3>
+        <p class="service-desc">
+          Transforming raw footage into compelling stories. Professional colour grading, motion graphics, and cinematic cuts that keep viewers engaged from first frame to last.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Premiere Pro</span>
+          <span class="tag">After Effects</span>
+          <span class="tag">Color Grading</span>
+          <span class="tag">Motion Graphics</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 3 — EDIT: Social Media -->
+      <div class="service-card fade-up delay-2 hover-target" data-label="View">
+        <span class="service-number">03</span>
+        <span class="service-icon">📱</span>
+        <h3 class="service-title">Social Media Management</h3>
+        <p class="service-desc">
+          Strategic content creation and community management that builds authentic brand presence. Data-informed posting schedules, growth tactics, and engagement strategies.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Content Strategy</span>
+          <span class="tag">Analytics</span>
+          <span class="tag">Scheduling</span>
+          <span class="tag">Growth</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 4 — EDIT: UI/UX Design -->
+      <div class="service-card fade-up delay-3 hover-target" data-label="View">
+        <span class="service-number">04</span>
+        <span class="service-icon">✦</span>
+        <h3 class="service-title">UI / UX Design</h3>
+        <p class="service-desc">
+          Designing intuitive, elegant user interfaces grounded in human psychology. User research, wireframes, prototypes, and high-fidelity designs that delight and perform.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Figma</span>
+          <span class="tag">Wireframing</span>
+          <span class="tag">Prototyping</span>
+          <span class="tag">User Research</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 5 — EDIT: Supply Chain -->
+      <div class="service-card fade-up hover-target" data-label="View">
+        <span class="service-number">05</span>
+        <span class="service-icon">⛓</span>
+        <h3 class="service-title">Supply Chain Specialist</h3>
+        <p class="service-desc">
+          End-to-end supply chain optimisation and analysis. Identifying bottlenecks, improving logistics flows, and implementing systems that reduce costs and boost efficiency.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Logistics</span>
+          <span class="tag">Procurement</span>
+          <span class="tag">Process Mapping</span>
+          <span class="tag">Optimization</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 6 — EDIT: Graphic Design -->
+      <div class="service-card fade-up delay-1 hover-target" data-label="View">
+        <span class="service-number">06</span>
+        <span class="service-icon">🎨</span>
+        <h3 class="service-title">Graphic Design</h3>
+        <p class="service-desc">
+          Visual communication that commands attention. Logos, brand identities, marketing materials, and print/digital assets crafted with meticulous aesthetic sensibility.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Photoshop</span>
+          <span class="tag">Illustrator</span>
+          <span class="tag">Brand Identity</span>
+          <span class="tag">Print & Digital</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 7 — EDIT: Excel & Power BI -->
+      <div class="service-card fade-up delay-2 hover-target" data-label="View">
+        <span class="service-number">07</span>
+        <span class="service-icon">📊</span>
+        <h3 class="service-title">Excel & Power BI Analytics</h3>
+        <p class="service-desc">
+          Turning complex data into clear, actionable insights. Advanced Excel modelling, pivot tables, DAX formulas, and interactive Power BI dashboards that drive smarter decisions.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Power BI</span>
+          <span class="tag">Advanced Excel</span>
+          <span class="tag">DAX</span>
+          <span class="tag">Data Modelling</span>
+        </div>
+      </div>
+
+      <!-- SERVICE CARD 8 — EDIT: Brand Strategy (bonus) -->
+      <div class="service-card fade-up delay-3 hover-target" data-label="View">
+        <span class="service-number">08</span>
+        <span class="service-icon">💡</span>
+        <h3 class="service-title">Brand Strategy & Consulting</h3>
+        <p class="service-desc">
+          Holistic brand thinking that connects every touchpoint. Defining positioning, messaging frameworks, and visual direction to ensure your brand speaks with one clear, powerful voice.
+        </p>
+        <div class="service-tags">
+          <span class="tag">Positioning</span>
+          <span class="tag">Messaging</span>
+          <span class="tag">Visual Identity</span>
+          <span class="tag">Consulting</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       EXPERTISE / TOOLS SECTION
+       EDIT: Tool names and icons here
+  ═══════════════════════════════════════════ -->
+  <section id="expertise">
+    <div class="expertise-inner">
+      <div class="expertise-header">
+        <div>
+          <p class="section-label fade-up">My Arsenal</p>
+          <h2 class="fade-up delay-1">Tools of the <em>Trade</em></h2>
+        </div>
+        <!-- EDIT: Expertise description -->
+        <p class="fade-up delay-2" style="padding-top:2.5rem;">
+          Mastery isn't about knowing every tool — it's about knowing the right ones deeply. Each instrument in my arsenal has been chosen for its power, precision, and the results it consistently delivers.
+        </p>
+      </div>
+
+      <!-- EDIT: Add/remove/rename tool items here -->
+      <div class="tools-grid fade-up">
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">🌐</span>
+          <span class="tool-name">HTML / CSS</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">⚡</span>
+          <span class="tool-name">JavaScript</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">🎨</span>
+          <span class="tool-name">Figma</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">📐</span>
+          <span class="tool-name">Illustrator</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">🖼</span>
+          <span class="tool-name">Photoshop</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">🎬</span>
+          <span class="tool-name">Premiere Pro</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">✨</span>
+          <span class="tool-name">After Effects</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">📊</span>
+          <span class="tool-name">Power BI</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">📋</span>
+          <span class="tool-name">Excel</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">📅</span>
+          <span class="tool-name">Meta Suite</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">🔲</span>
+          <span class="tool-name">WordPress</span>
+        </div>
+
+        <div class="tool-item hover-target" data-label="Use">
+          <span class="tool-icon">📦</span>
+          <span class="tool-name">Supply Chain Tools</span>
+
+             
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE STRIP 2 -->
+  <div class="marquee-strip">
+    <div class="marquee-inner" style="animation-direction:reverse;">
+      <span>Pixel Perfect</span><span class="dot">◆</span>
+      <span>Data-Driven</span><span class="dot">◆</span>
+      <span>Deadline-Committed</span><span class="dot">◆</span>
+      <span>Strategy-First</span><span class="dot">◆</span>
+      <span>Detail Obsessed</span><span class="dot">◆</span>
+      <span>Results-Oriented</span><span class="dot">◆</span>
+      <span>Pixel Perfect</span><span class="dot">◆</span>
+      <span>Data-Driven</span><span class="dot">◆</span>
+      <span>Deadline-Committed</span><span class="dot">◆</span>
+      <span>Strategy-First</span><span class="dot">◆</span>
+      <span>Detail Obsessed</span><span class="dot">◆</span>
+      <span>Results-Oriented</span><span class="dot">◆</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       PROCESS SECTION
+       EDIT: Step titles and descriptions here
+  ═══════════════════════════════════════════ -->
+  <section id="process">
+    <div class="process-inner">
+      <div class="process-header">
+        <p class="section-label fade-up" style="justify-content:center;">How I Work</p>
+        <h2 class="fade-up delay-1">A Process Refined to <em>Perfection</em></h2>
+      </div>
+
+      <div class="process-steps">
+
+        <!-- EDIT: Step 1 -->
+        <div class="step fade-up hover-target" data-label="Step">
+          <div class="step-num">01</div>
+          <h3 class="step-title">Discover</h3>
+          <p class="step-desc">Deep-dive into your brand, goals, audience, and competitive landscape to understand what truly matters.</p>
+        </div>
+
+        <!-- EDIT: Step 2 -->
+        <div class="step fade-up delay-1 hover-target" data-label="Step">
+          <div class="step-num">02</div>
+          <h3 class="step-title">Strategise</h3>
+          <p class="step-desc">Craft a clear, measurable strategy with defined deliverables, timelines, and creative direction.</p>
+        </div>
+
+        <!-- EDIT: Step 3 -->
+        <div class="step fade-up delay-2 hover-target" data-label="Step">
+          <div class="step-num">03</div>
+          <h3 class="step-title">Execute</h3>
+          <p class="step-desc">Bring the vision to life with meticulous attention to craft, iteration, and quality at every stage.</p>
+        </div>
+
+        <!-- EDIT: Step 4 -->
+        <div class="step fade-up delay-3 hover-target" data-label="Step">
+          <div class="step-num">04</div>
+          <h3 class="step-title">Deliver</h3>
+          <p class="step-desc">Hand off polished, production-ready work — and remain available for ongoing refinement and support.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       QUOTE SECTION
+       EDIT: The quote text here
+  ═══════════════════════════════════════════ -->
+  <section id="quote">
+    <p class="section-label fade-up" style="justify-content:center;">Philosophy</p>
+    <!-- EDIT: Your personal quote or motto -->
+    <blockquote class="quote-text fade-up delay-1">
+      "Excellence is not a destination — it is a <span>standard</span> I bring to every single project, no matter how large or small."
+    </blockquote>
+    <!-- EDIT: Attribution -->
+    <p class="quote-attr fade-up delay-2">— Muhammad Sheeraz</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════════
+       CONTACT SECTION
+       EDIT: Email, phone, social links here
+  ═══════════════════════════════════════════ -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <p class="section-label fade-up">Get In Touch</p>
+        <!-- EDIT: Contact headline -->
+        <h2 class="fade-up delay-1">Let's Build<br><em>Something</em><br>Extraordinary</h2>
+        <!-- EDIT: Contact description -->
+        <p class="fade-up delay-2">
+          Whether you need a complete digital transformation or a single refined deliverable — I'd love to hear about your project. Let's create something worth remembering.
+        </p>
+        <!-- EDIT: Your email address -->
+        <a href="mailto:iamsheeraz100@gmail.com" class="contact-email fade-up delay-3 hover-target" data-label="Email">
+          iamsheeraz100@gmail.com
+        </a>
+
+        <!-- EDIT: Your social media links and labels -->
+        <div class="contact-socials fade-up delay-4">
+
+  <a href="https://www.linkedin.com/in/muhammad-sheeraz-5a25b3260/"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="social-btn hover-target"
+     data-label="Visit">
+    <span>LinkedIn</span>
+  </a>
+
+  <a href="https://www.instagram.com/shotsbyshazi_/"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="social-btn hover-target"
+     data-label="Visit">
+    <span>Instagram</span>
+  </a>
+
+</div>
+      </div>
+
+      <div class="contact-right fade-up delay-2">
+        <!-- EDIT: Contact form — adjust field labels/placeholders -->
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-group">
+            <label>Muhammad Sheeraz</label>
+            <input type="text" placeholder="Full Name" required/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="youname@company.com" required/>
+          </div>
+          <div class="form-group">
+            <label>Project Type</label>
+            <input type="text" placeholder="e.g. Website, Video, Power BI Dashboard…"/>
+          </div>
+          <div class="form-group">
+            <label>Your Message</label>
+            <textarea placeholder="Tell me about your project…" required></textarea>
+          </div>
+          <button type="submit" class="form-submit hover-target" data-label="Send">
+            <span>Send Message</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+       EDIT: Footer text and copyright here
+  ═══════════════════════════════════════════ -->
+  <footer>
+    <!-- EDIT: Footer logo -->
+    <div class="footer-logo">Muhammad <span>Sheeraz</span></div>
+    <!-- EDIT: Copyright year and name -->
+    <p class="footer-copy">© 2026 Muhammad Sheeraz — All Rights Reserved</p>
+    <!-- EDIT: Footer tagline -->
+    <p class="footer-tagline">Crafted with precision & passion</p>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════ -->
+  <script>
+    // ─── LOADING SCREEN ───────────────────────────────────────────
+    $(document).ready(function(){
+      let pct = 0;
+      const interval = setInterval(function(){
+        pct += Math.random() * 18;
+        if(pct >= 100){ pct = 100; clearInterval(interval); }
+        $('#loaderPct').text(Math.floor(pct) + '%');
+        $('#loaderLine').css('width', pct + '%');
+        if(pct === 100){
+          setTimeout(function(){
+            gsap.to('#loader', {
+              opacity: 0, duration: 0.8, ease: 'power2.inOut',
+              onComplete: function(){
+                $('#loader').hide();
+                revealHero();
+              }
+            });
+          }, 400);
+        }
+      }, 60);
+    });
+
+    // ─── HERO REVEAL ──────────────────────────────────────────────
+    function revealHero(){
+      gsap.to('#heroEyebrow', { opacity:1, y:0, duration:0.8, ease:'power3.out', delay:0.1 });
+      gsap.fromTo('#heroName', {opacity:0, y:60}, {opacity:1, y:0, duration:1, ease:'power3.out', delay:0.25});
+      gsap.to('#heroRoles',   { opacity:1, duration:0.6, delay:0.7 });
+      gsap.to('#heroDesc',    { opacity:1, y:0, duration:0.8, delay:0.85, ease:'power3.out' });
+      gsap.to('#heroCta',     { opacity:1, y:0, duration:0.8, delay:1.0,  ease:'power3.out' });
+      gsap.to('#scrollInd',   { opacity:1, duration:0.8, delay:1.5 });
+      startTyping();
+    }
+
+    // ─── TYPED ROLES ──────────────────────────────────────────────
+    // EDIT: Role strings for the typing effect
+    const roles = [
+      'Web Designer & Developer',
+      'Video Editor & Producer',
+      'Social Media Manager',
+      'UI / UX Designer',
+      'Supply Chain Specialist',
+      'Graphic Designer',
+      'Excel & Power BI Analyst',
+      'Brand Strategist'
+    ];
+    let roleIndex = 0, charIndex = 0, isDeleting = false;
+
+    function startTyping(){ setTimeout(typeLoop, 600); }
+    function typeLoop(){
+      const current = roles[roleIndex];
+      if(isDeleting){
+        charIndex--;
+        $('#typed-role').text(current.substring(0, charIndex));
+        if(charIndex === 0){
+          isDeleting = false;
+          roleIndex = (roleIndex + 1) % roles.length;
+          setTimeout(typeLoop, 500);
+        } else { setTimeout(typeLoop, 40); }
+      } else {
+        charIndex++;
+        $('#typed-role').text(current.substring(0, charIndex));
+        if(charIndex === current.length){
+          isDeleting = true;
+          setTimeout(typeLoop, 1800);
+        } else { setTimeout(typeLoop, 75); }
+      }
+    }
+
+    // ─── CUSTOM CURSOR + GLITTER TRAIL ───────────────────────────
+    let mx = window.innerWidth/2, my = window.innerHeight/2;
+    let ox = mx, oy = my;
+    let lastGlitterX = mx, lastGlitterY = my;
+    let glitterActive = false;
+
+    // Glitter particle shapes — stars, diamonds, sparks
+    const glitterShapes = ['✦','★','◆','✸','✺','⬡','·','✦','✧'];
+
+    // Glitter color palette — gold spectrum
+    const glitterColors = [
+      '#FFD700','#C9A84C','#E8C97A','#FFF0A0',
+      '#FFE566','#D4AF37','#F5DEB3','#FFFACD',
+      '#C9A84C','#ffffff'
+    ];
+
+    function spawnGlitter(x, y){
+      const count = 1; // always 1 — clean & subtle
+      for(let i = 0; i < count; i++){
+        const el = document.createElement('div');
+        const shape = glitterShapes[Math.floor(Math.random() * glitterShapes.length)];
+        const color = glitterColors[Math.floor(Math.random() * glitterColors.length)];
+        const size  = 6 + Math.random() * 8;           // 6px – 14px (smaller)
+        const angle = Math.random() * 360;
+        const dist  = 10 + Math.random() * 22;         // subtle drift (was 50)
+        const dx    = Math.cos(angle * Math.PI/180) * dist;
+        const dy    = Math.sin(angle * Math.PI/180) * dist - (Math.random() * 14); // gentle upward
+        const dur   = 700 + Math.random() * 500;       // slightly longer fade
+
+        el.textContent = shape;
+        el.style.cssText = `
+          position: fixed;
+          left: ${x}px;
+          top: ${y}px;
+          font-size: ${size}px;
+          color: ${color};
+          pointer-events: none;
+          z-index: 999990;
+          user-select: none;
+          line-height: 1;
+          text-shadow: 0 0 6px ${color}, 0 0 12px ${color}88;
+          transform: translate(-50%, -50%) rotate(${Math.random()*360}deg) scale(1);
+          opacity: 1;
+          transition:
+            transform ${dur}ms cubic-bezier(0.25,0.46,0.45,0.94),
+            opacity   ${dur}ms ease-out,
+            top       ${dur}ms cubic-bezier(0.25,0.46,0.45,0.94),
+            left      ${dur}ms cubic-bezier(0.25,0.46,0.45,0.94);
+          will-change: transform, opacity, top, left;
+        `;
+        document.body.appendChild(el);
+
+        // Trigger animation on next frame
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            el.style.left    = (x + dx) + 'px';
+            el.style.top     = (y + dy) + 'px';
+            el.style.opacity = '0';
+            el.style.transform = `translate(-50%,-50%) rotate(${Math.random()*720}deg) scale(0.2)`;
+          });
+        });
+
+        // Remove after animation
+        setTimeout(function(){ el.remove(); }, dur + 100);
+      }
+    }
+
+    // Spawn glitter only when cursor actually moves (throttled by distance)
+    $(document).on('mousemove', function(e){
+      mx = e.clientX; my = e.clientY;
+      $('#cursor-inner').css({ left: mx, top: my });
+      $('#cursor-label').css({ left: mx, top: my });
+
+      const dx = mx - lastGlitterX;
+      const dy = my - lastGlitterY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      if(dist > 16){ // only spawn if moved at least 16px — more spaced out, less cluttered
+        spawnGlitter(mx, my);
+        lastGlitterX = mx;
+        lastGlitterY = my;
+      }
+    });
+
+    // Smooth outer cursor
+    function animateCursor(){
+      ox += (mx - ox) * 0.12;
+      oy += (my - oy) * 0.12;
+      $('#cursor-outer').css({ left: ox, top: oy });
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Hover targets — bigger burst on hover elements
+    $('body').on('mouseenter', '.hover-target', function(){
+      const label = $(this).data('label') || '';
+      $('body').addClass('cursor-hover');
+      $('#cursor-label').text(label);
+      // Extra burst
+      for(let i=0;i<4;i++) spawnGlitter(mx + (Math.random()-0.5)*20, my + (Math.random()-0.5)*20);
+    }).on('mouseleave', '.hover-target', function(){
+      $('body').removeClass('cursor-hover');
+      $('#cursor-label').text('');
+    });
+
+    // Also on links/buttons
+    $('body').on('mouseenter', 'a, button, .service-card, .tool-item, .step, .social-btn', function(){
+      $('body').addClass('cursor-hover');
+      for(let i=0;i<3;i++) spawnGlitter(mx + (Math.random()-0.5)*16, my + (Math.random()-0.5)*16);
+    }).on('mouseleave', 'a, button, .service-card, .tool-item, .step, .social-btn', function(){
+      $('body').removeClass('cursor-hover');
+    });
+
+    // Click burst — big explosion on click
+    $(document).on('click', function(e){
+      for(let i=0;i<8;i++) spawnGlitter(e.clientX, e.clientY);
+    });
+
+    // ─── NAVBAR SCROLL ────────────────────────────────────────────
+    $(window).on('scroll', function(){
+      if($(this).scrollTop() > 60){
+        $('#navbar').addClass('scrolled');
+      } else {
+        $('#navbar').removeClass('scrolled');
+      }
+      checkFadeUps();
+    });
+
+    // ─── SCROLL FADE-UPS ──────────────────────────────────────────
+    function checkFadeUps(){
+      $('.fade-up').each(function(){
+        const top = $(this)[0].getBoundingClientRect().top;
+        if(top < window.innerHeight * 0.88){
+          $(this).addClass('visible');
+        }
+      });
+    }
+    $(document).ready(checkFadeUps);
+
+    // ─── STATS COUNTER ────────────────────────────────────────────
+    let counted = false;
+    $(window).on('scroll', function(){
+      if(counted) return;
+      const stats = $('.stat-num');
+      if(stats.length && stats[0].getBoundingClientRect().top < window.innerHeight){
+        counted = true;
+        stats.each(function(){
+          const target = parseInt($(this).data('target'));
+          const el = this;
+          let current = 0;
+          const step = Math.ceil(target / 60);
+          const timer = setInterval(function(){
+            current += step;
+            if(current >= target){ current = target; clearInterval(timer); }
+            $(el).text(current);
+          }, 25);
+        });
+      }
+    });
+
+    // ─── MOBILE NAV ───────────────────────────────────────────────
+    function toggleNav(){
+      $('#navOverlay').toggleClass('open');
+    }
+    function closeNav(){
+      $('#navOverlay').removeClass('open');
+    }
+
+    // ─── CONTACT FORM ────────────────────────────────────────────
+    function handleSubmit(e){
+      e.preventDefault();
+      const btn = $(e.target).find('.form-submit span');
+      btn.text('Message Sent ✓');
+      btn.closest('button').css({ background:'transparent', borderColor:'var(--gold)', color:'var(--gold)' });
+      setTimeout(function(){ btn.text('Send Message'); }, 4000);
+    }
+
+    // ─── SERVICE CARD PARTICLE HOVER ──────────────────────────────
+    $('.service-card').on('mousemove', function(e){
+      const rect = this.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      $(this).css('--mx', x + '%').css('--my', y + '%');
+    });
+
+    // ─── SMOOTH ANCHOR SCROLL ─────────────────────────────────────
+    $('a[href^="#"]').on('click', function(e){
+      const target = $(this.getAttribute('href'));
+      if(target.length){
+        e.preventDefault();
+        $('html, body').animate({ scrollTop: target.offset().top - 80 }, 900, 'swing');
+      }
+    });
+
+    // ─── GOLD GLOW ON HOVER (service cards) ───────────────────────
+    $('.service-card').on('mouseenter', function(){
+      $(this).css('box-shadow', '0 0 60px rgba(201,168,76,0.08)');
+    }).on('mouseleave', function(){
+      $(this).css('box-shadow', 'none');
+    });
+
+  </script>
+</body>
+</html>
