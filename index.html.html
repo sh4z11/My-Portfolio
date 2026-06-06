@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
@@ -32,6 +33,58 @@
       --font-accent:  'Playfair Display', serif;
     }
 
+    /* --- PREMIUM LIGHT MODE OVERRIDES --- */
+    body.light-mode {
+      --black:       #FAFAFA;       /* Pure clean off-white background */
+      --black-2:     #FFFFFF;       /* Pure white for sections/cards */
+      --black-3:     #F3F3F3;       /* Light grey for hovers */
+      --black-4:     #E5E5E5;       
+      --white:       #121212;       /* Charcoal almost-black text for high readability */
+      --white-dim:   #4A4A4A;       /* Dark grey for secondary text */
+      --white-faint: rgba(0,0,0,0.05);
+      --border:      rgba(0,0,0,0.1); /* Subtle dark borders */
+      --gold-faint:  rgba(201,168,76,0.15);
+    }
+    
+    body.light-mode::before { opacity: 0.04; }
+    body.light-mode::after { background: radial-gradient(ellipse 85% 85% at 50% 50%, transparent 40%, rgba(0,0,0,0.05) 100%); }
+    body.light-mode #loader { background: #FAFAFA; }
+    body.light-mode #loader .loader-name { color: #121212; }
+    body.light-mode nav.scrolled { background: rgba(250, 250, 250, 0.95); box-shadow: 0 4px 30px rgba(0,0,0,0.05); }
+    body.light-mode .nav-logo { color: #121212; }
+    body.light-mode .nav-links a { color: #4A4A4A; }
+    body.light-mode .nav-links a:hover { color: var(--gold); }
+    body.light-mode .hamburger span { background: #121212; }
+    body.light-mode .nav-overlay { background: rgba(250, 250, 250, 0.98); }
+    body.light-mode .nav-overlay a { color: #121212; }
+    body.light-mode .hero-name, body.light-mode .about-right h2, body.light-mode .services-header h2, 
+    body.light-mode .expertise-header h2, body.light-mode .process-header h2, body.light-mode .contact-left h2 { color: #121212; }
+    body.light-mode .service-title, body.light-mode .step-title, body.light-mode .quote-text { color: #121212; }
+    body.light-mode #typed-role { color: #4A4A4A; font-weight: 500; }
+    body.light-mode .service-card { background: #FFFFFF; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.02); }
+    body.light-mode .service-card:hover { background: #F8F8F8; }
+    body.light-mode .tool-item { background: #FAFAFA; border: 1px solid var(--border); }
+    body.light-mode .tool-item:hover { background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+    body.light-mode .tool-name { color: #4A4A4A; }
+    body.light-mode .step-num { background: #FFFFFF; color: var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    body.light-mode footer { background: #F3F3F3; border-top: 1px solid var(--border); }
+    body.light-mode .footer-logo, body.light-mode .footer-copy { color: #4A4A4A; }
+    body.light-mode .form-group input, body.light-mode .form-group textarea {
+      background: #FFFFFF; border: 1px solid rgba(0,0,0,0.15); color: #121212; -webkit-text-fill-color: #121212;
+    }
+    body.light-mode .form-group input:focus, body.light-mode .form-group textarea:focus {
+      border-color: var(--gold); background: #FAFAFA; box-shadow: 0 0 0 2px rgba(201,168,76,0.1);
+    }
+    body.light-mode .form-group input::placeholder, body.light-mode .form-group textarea::placeholder {
+      color: #999; -webkit-text-fill-color: #999;
+    }
+    body.light-mode .service-row select {
+      background-color: #FFFFFF; border: 1px solid rgba(0,0,0,0.15); color: #121212;
+    }
+    body.light-mode .service-row select option { background: #FFFFFF; color: #121212; }
+    body.light-mode .social-btn { color: #4A4A4A; }
+    body.light-mode .btn-primary { color: #121212; }
+
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior: smooth; font-size: 16px; }
 
@@ -47,9 +100,47 @@
       letter-spacing: 0.03em;
       overflow-x: hidden;
       cursor: none;
+      transition: background-color 0.5s ease, color 0.5s ease;
     }
 
     ::selection { background: var(--gold); color: var(--black); }
+
+    /* Theme Toggle Button */
+    #theme-toggle {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--black-2);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      z-index: 99999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    #theme-toggle:hover {
+      background: var(--gold);
+      color: var(--black);
+      transform: scale(1.1);
+    }
+
+    /* 3D Background Canvas */
+    #bg-3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+    }
 
     #cursor-outer {
       position: fixed;
@@ -1081,20 +1172,6 @@
       to   { transform: translateX(-50%); }
     }
 
-    .fade-up {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-    .fade-up.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .fade-up.delay-1 { transition-delay: 0.1s; }
-    .fade-up.delay-2 { transition-delay: 0.2s; }
-    .fade-up.delay-3 { transition-delay: 0.3s; }
-    .fade-up.delay-4 { transition-delay: 0.4s; }
-
     @media (max-width: 1024px) {
       nav { padding: 24px 40px; }
       #hero, #about, #services, #expertise, #process, #contact { padding-left: 40px; padding-right: 40px; }
@@ -1232,11 +1309,14 @@
 </head>
 <body>
 
+  <canvas id="bg-3d"></canvas>
   <canvas id="glitter-canvas"></canvas>
 
   <div id="cursor-outer"></div>
   <div id="cursor-inner"></div>
   <div id="cursor-label"></div>
+
+  <button id="theme-toggle" class="hover-target" data-label="Toggle Theme">🌓</button>
 
   <div id="loader">
     <div class="loader-name">Muhammad Sheeraz</div>
@@ -1688,6 +1768,183 @@
   </footer>
 
   <script>
+    // ── THEME TOGGLE ────────────────────────────────────────────────
+    const themeToggle = document.getElementById('theme-toggle');
+    if(localStorage.getItem('theme') === 'light'){
+      document.body.classList.add('light-mode');
+    }
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      if(document.body.classList.contains('light-mode')){
+        localStorage.setItem('theme', 'light');
+      } else {
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+
+    // ── BACKGROUND 3D ELEMENTS & PARTICLES (Three.js) ───────────────
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-3d'), alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scrollGroup = new THREE.Group();
+    scene.add(scrollGroup);
+
+    // Standard Premium Materials
+    const wireMat = new THREE.MeshPhysicalMaterial({ color: 0xC9A84C, metalness: 0.6, roughness: 0.2, transparent: true, opacity: 0.35, wireframe: true });
+    const solidMat = new THREE.MeshPhysicalMaterial({ color: 0xC9A84C, metalness: 0.7, roughness: 0.15, transparent: true, opacity: 0.15 });
+
+    const floatingMeshes = [];
+
+    function addShape(geometry, x, y, z, material, isIcon = false) {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(x, y, z);
+      scrollGroup.add(mesh);
+      floatingMeshes.push({
+        mesh: mesh,
+        rx: isIcon ? (Math.random() - 0.5) * 0.01 : (Math.random() - 0.5) * 0.005,
+        ry: isIcon ? (Math.random() - 0.5) * 0.01 : (Math.random() - 0.5) * 0.005,
+        startY: y
+      });
+    }
+
+    // Custom Canvas Generator for Software Logos
+    function createLogoMaterial(text, bgColor, textColor) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bgColor;
+      
+      // Draw rounded rectangle
+      ctx.beginPath();
+      ctx.moveTo(30, 0); ctx.lineTo(226, 0); ctx.quadraticCurveTo(256, 0, 256, 30);
+      ctx.lineTo(256, 226); ctx.quadraticCurveTo(256, 256, 226, 256);
+      ctx.lineTo(30, 256); ctx.quadraticCurveTo(0, 256, 0, 226);
+      ctx.lineTo(0, 30); ctx.quadraticCurveTo(0, 0, 30, 0);
+      ctx.fill();
+
+      // Text setup
+      ctx.font = 'bold 110px "Montserrat", sans-serif';
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 128, 140);
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      
+      return new THREE.MeshPhysicalMaterial({
+        map: texture, metalness: 0.2, roughness: 0.3, clearcoat: 0.8, clearcoatRoughness: 0.2
+      });
+    }
+
+    // ── SECTION 1: HERO (Software Icons) ──
+    const iconData = [
+      { text: 'X', bg: '#107C41', color: '#FFFFFF' }, // Excel
+      { text: 'Bi', bg: '#F2C811', color: '#000000' }, // Power BI
+      { text: 'Ae', bg: '#00005B', color: '#9999FF' }, // After Effects
+      { text: 'Ps', bg: '#001E36', color: '#31A8FF' }, // Photoshop
+      { text: 'Fg', bg: '#F24E1E', color: '#FFFFFF' }, // Figma (Placeholder Fg using brand colors)
+      { text: 'VS', bg: '#0066B8', color: '#FFFFFF' }  // VS Code
+    ];
+
+    const iconGeo = new THREE.BoxGeometry(3.5, 3.5, 3.5);
+    iconData.forEach((icon, index) => {
+      const mat = createLogoMaterial(icon.text, icon.bg, icon.color);
+      const angle = (index / iconData.length) * Math.PI * 2;
+      const radius = 18 + Math.random() * 8;
+      const x = Math.cos(angle) * radius;
+      const y = 8 - Math.random() * 16;
+      const z = -20 - Math.random() * 10;
+      addShape(iconGeo, x, y, z, mat, true);
+    });
+
+    // ── SECTION 2 to 5: Different Geometries Everywhere ──
+    const addRandomShapes = (geometryList, count, startY, endY) => {
+      for(let i=0; i<count; i++) {
+        const geo = geometryList[Math.floor(Math.random() * geometryList.length)];
+        const x = (Math.random() - 0.5) * 90;
+        const y = startY - Math.random() * (startY - endY);
+        const z = -15 - Math.random() * 35;
+        const isSolid = Math.random() > 0.5;
+        addShape(geo, x, y, z, isSolid ? solidMat : wireMat);
+      }
+    }
+
+    // About Section
+    addRandomShapes([new THREE.TetrahedronGeometry(2.5, 0), new THREE.TorusGeometry(1.8, 0.5, 16, 32)], 15, -30, -60);
+    // Services Section
+    addRandomShapes([new THREE.IcosahedronGeometry(2.2, 0), new THREE.OctahedronGeometry(2.5, 0)], 18, -70, -100);
+    // Expertise & Process Section
+    addRandomShapes([new THREE.DodecahedronGeometry(2.5, 0), new THREE.SphereGeometry(1.8, 16, 16)], 15, -110, -140);
+    // Contact Section
+    addRandomShapes([new THREE.ConeGeometry(2, 4, 16), new THREE.CylinderGeometry(1.5, 1.5, 4, 16)], 12, -150, -190);
+
+    // ── MAGICAL PARTICLES ──
+    const particlesGeo = new THREE.BufferGeometry();
+    const particleCount = 2000; // Massively increased
+    const posArray = new Float32Array(particleCount * 3);
+    
+    for(let i = 0; i < particleCount * 3; i += 3) {
+      posArray[i] = (Math.random() - 0.5) * 150;     // X spread
+      posArray[i+1] = 20 - Math.random() * 220;      // Y vertical drop covering entire scroll
+      posArray[i+2] = (Math.random() - 0.5) * 80 - 10; // Z depth
+    }
+    
+    particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const pMat = new THREE.PointsMaterial({
+      size: 0.12,
+      color: 0xC9A84C,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending
+    });
+    const particlesMesh = new THREE.Points(particlesGeo, pMat);
+    scrollGroup.add(particlesMesh);
+
+    // ── LIGHTING ──
+    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+    const dLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dLight.position.set(10, 20, 10);
+    scene.add(dLight);
+
+    camera.position.z = 20;
+
+    // ── SCROLL SYNC & ANIMATION ──
+    let currentScroll = window.scrollY;
+    window.addEventListener('scroll', () => { currentScroll = window.scrollY; });
+    const clock = new THREE.Clock();
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+      const time = clock.getElapsedTime();
+
+      // Parallax scroll effect
+      const targetY = -(currentScroll * 0.025);
+      camera.position.y += (targetY - camera.position.y) * 0.05;
+
+      // Spin and float everything
+      floatingMeshes.forEach(obj => {
+        obj.mesh.rotation.x += obj.rx;
+        obj.mesh.rotation.y += obj.ry;
+        obj.mesh.position.y = obj.startY + Math.sin(time * 1.2 + obj.mesh.position.x) * 1.5;
+      });
+
+      // Slowly rotate the galaxy of particles
+      particlesMesh.rotation.y = time * 0.015;
+
+      renderer.render(scene, camera);
+    }
+    animate3D();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
     // ── LOADING SCREEN ──────────────────────────────────────────────
     $(document).ready(function(){
       let pct = 0;
@@ -1712,12 +1969,12 @@
 
     // ── HERO REVEAL ──────────────────────────────────────────────
     function revealHero(){
-      gsap.to('#heroEyebrow', { opacity:1, y:0, duration:0.8, ease:'power3.out', delay:0.1 });
-      gsap.fromTo('#heroName', {opacity:0, y:60}, {opacity:1, y:0, duration:1, ease:'power3.out', delay:0.25});
-      gsap.to('#heroRoles',   { opacity:1, duration:0.6, delay:0.7 });
-      gsap.to('#heroDesc',    { opacity:1, y:0, duration:0.8, delay:0.85, ease:'power3.out' });
-      gsap.to('#heroCta',     { opacity:1, y:0, duration:0.8, delay:1.0,  ease:'power3.out' });
-      gsap.to('#scrollInd',   { opacity:1, duration:0.8, delay:1.5 });
+      gsap.to('#heroEyebrow', { opacity:1, y:0, duration:0.5, ease:'power3.out', delay:0.1 });
+      gsap.fromTo('#heroName', {opacity:0, y:60}, {opacity:1, y:0, duration:0.7, ease:'power3.out', delay:0.2});
+      gsap.to('#heroRoles',   { opacity:1, duration:0.4, delay:0.5 });
+      gsap.to('#heroDesc',    { opacity:1, y:0, duration:0.5, delay:0.6, ease:'power3.out' });
+      gsap.to('#heroCta',     { opacity:1, y:0, duration:0.5, delay:0.7,  ease:'power3.out' });
+      gsap.to('#scrollInd',   { opacity:1, duration:0.5, delay:1.0 });
       startTyping();
     }
 
@@ -1964,19 +2221,51 @@
       } else {
         $('#navbar').removeClass('scrolled');
       }
-      checkFadeUps();
     });
 
-    // ── SCROLL FADE-UPS ──────────────────────────────────────────
-    function checkFadeUps(){
-      $('.fade-up').each(function(){
-        const top = $(this)[0].getBoundingClientRect().top;
-        if(top < window.innerHeight * 0.88){
-          $(this).addClass('visible');
+    // ── TWO-WAY FASTER SCROLL ANIMATIONS (GSAP ScrollTrigger) ────
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('.fade-up').forEach(function(el) {
+      let animDelay = 0;
+      if (el.classList.contains('delay-1')) animDelay = 0.1;
+      if (el.classList.contains('delay-2')) animDelay = 0.2;
+      if (el.classList.contains('delay-3')) animDelay = 0.3;
+      if (el.classList.contains('delay-4')) animDelay = 0.4;
+
+      gsap.fromTo(el, 
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, 
+          y: 0, 
+          duration: 0.4,
+          delay: animDelay,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play reverse play reverse"
+          }
         }
-      });
-    }
-    $(document).ready(checkFadeUps);
+      );
+    });
+
+    gsap.utils.toArray('section:not(#hero)').forEach(function(sec) {
+      gsap.fromTo(sec, 
+        { opacity: 0, scale: 0.98 },
+        {
+          opacity: 1, 
+          scale: 1, 
+          duration: 0.6,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: sec,
+            start: "top 95%",
+            toggleActions: "play reverse play reverse"
+          }
+        }
+      );
+    });
 
     // ── STATS COUNTER ────────────────────────────────────────────
     let counted = false;
@@ -2042,8 +2331,6 @@
     });
 
     // ── CONTACT FORM → EMAIL via FormSubmit ──────────────────────
-    // Uses FormSubmit.co — free, no backend needed.
-    // First submission will ask you to confirm your email once. After that it works forever.
     $('#contactForm').on('submit', function(e){
       e.preventDefault();
 
